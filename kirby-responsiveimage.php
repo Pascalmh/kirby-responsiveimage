@@ -51,7 +51,7 @@ $kirby->set('tag', 'responsiveimage', [
         $img->attr('width', $tag->attr('width'));
         $img->attr('height', $tag->attr('height'));
         $img->attr('class', $tag->attr('class'));
-        c::set('responsiveimage.html', $img);
+        $html = $img;
 
         if ($href = $tag->attr('link')) {
             $link = brick('a');
@@ -61,30 +61,28 @@ $kirby->set('tag', 'responsiveimage', [
                 $link->attr('target', '_blank');
             }
 
-            $link->append(function () {
-                return c::get('responsiveimage.html');
+            $link->append(function () use ($html) {
+                return $html;
             });
 
-            c::set('responsiveimage.html', $link);
+            $html = $link;
         }
 
         if (c::get('kirbytext.image.figure', true)) {
             $figure = brick('figure');
-            $figure->append(function () {
-                return c::get('responsiveimage.html');
+            $figure->append(function () use ($html) {
+                return $html;
             });
 
             if ($caption = $tag->attr('caption')) {
-                c::set('repsonsiveimage.figure.caption', $caption);
-
-                $figure->append(function() {
-                    return brick('figcaption', c::get('repsonsiveimage.figure.caption', false));
+                $figure->append(function() use ($caption) {
+                    return brick('figcaption', $caption);
                 });
             }
 
-            c::set('responsiveimage.html', $figure);
+            $html = $figure;
         }
 
-        return c::get('responsiveimage.html');
+        return $html;
     }
 ]);
