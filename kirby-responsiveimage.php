@@ -1,24 +1,17 @@
 <?php
 
-$kirby->set('tag', 'responsiveimage', [
-    'attr' => [
-        'alt',
-        'width',
-        'height',
-        'class',
-        'link',
-        'popup',
-        'caption',
-    ],
-    'html' => function ($tag) {
-        $image = $tag->file($tag->attr('responsiveimage'));
+$oldFunction = kirbytext::$tags['image'];
+kirbytext::$tags['image'] = [
+    'attr' => $oldFunction['attr'],
+    'html' => function ($tag) use ($oldFunction) {
+        $image = $tag->file($tag->attr('image'));
 
         if (!$image) {
-            return null;
+            return $result = call($oldFunction['html'], $tag);
         }
 
         $widths = c::get(
-            'tag.responsiveimage.widths',
+            'responsiveimage.widths',
             [
                 2400,
                 2200,
@@ -44,45 +37,9 @@ $kirby->set('tag', 'responsiveimage', [
             $srcset[] = $imageResized->url() . ' ' . $imageResized->width() . 'w';
         }
 
-        $img = brick('img');
-        $img->attr('src', array_values(array_slice($srcset, -1))[0]);
-        $img->attr('srcset', implode(', ', $srcset));
-        $img->attr('alt', $tag->attr('alt'));
-        $img->attr('width', $tag->attr('width'));
-        $img->attr('height', $tag->attr('height'));
-        $img->attr('class', $tag->attr('class'));
-        $html = $img;
+        $result = call($oldFunction['html'], $tag);
+        $result = str_replace('<img', '<img srcset="' . implode(', ', $srcset) . '"', $result->toString());
 
-        if ($href = $tag->attr('link')) {
-            $link = brick('a');
-            $link->attr('href', url($href));
-
-            if ($tag->attr('popup') === 'yes') {
-                $link->attr('target', '_blank');
-            }
-
-            $link->append(function () use ($html) {
-                return $html;
-            });
-
-            $html = $link;
-        }
-
-        if (c::get('kirbytext.image.figure', true)) {
-            $figure = brick('figure');
-            $figure->append(function () use ($html) {
-                return $html;
-            });
-
-            if ($caption = $tag->attr('caption')) {
-                $figure->append(function() use ($caption) {
-                    return brick('figcaption', $caption);
-                });
-            }
-
-            $html = $figure;
-        }
-
-        return $html;
+        return $result;
     }
-]);
+];
