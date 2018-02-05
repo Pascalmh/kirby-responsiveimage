@@ -1,6 +1,6 @@
 {
   "name": "pascalmh/kirby-responsiveimage",
-  "type": "kirby-tag",
+  "type": "kirby-plugin",
   "license": "MIT",
   "require": {
     "composer/installers": "~1.0",

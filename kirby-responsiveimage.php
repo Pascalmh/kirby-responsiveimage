@@ -1,6 +1,6 @@
 <?php
 
-kirbytext::$tags['responsiveimage'] = [
+$kirby->set('tag', 'responsiveimage', [
     'attr' => [
         'alt',
         'width',
@@ -87,4 +87,4 @@ kirbytext::$tags['responsiveimage'] = [
 
         return c::get('responsiveimage.html');
     }
-];
+]);
