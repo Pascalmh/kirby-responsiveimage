@@ -3,7 +3,7 @@
   "type": "kirby-plugin",
   "license": "MIT",
   "require": {
-    "composer/installers": "~1.0",
+    "composer/installers": "~2.0",
     "getkirby/kirby": "^2.4"
   },
   "repositories": [
